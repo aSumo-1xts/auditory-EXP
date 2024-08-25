@@ -78,9 +78,18 @@ end
 
 
 % 両耳インパルス応答からILDを取得する関数
+% 紹介されているうち、後者の方法を採用
 function ILD = getILD(winIR_L, winIR_R)
-    % 両耳間レベル差（ILD）を計算
-    ILD = hoge;
+    % 各周波数成分のパワーを計算
+    power_L = abs(fft(winIR_L)).^2;
+    power_R = abs(fft(winIR_R)).^2;
+
+    % パワースペクトルをデシベル単位に変換
+    dB_L = pow2db(power_L);
+    dB_R = pow2db(power_R);
+
+    % 各周波数成分の平均デシベル差を計算してILDとする
+    ILD = max(dB_L - dB_R);
 end
 
 
@@ -111,7 +120,12 @@ for i = 1:howManyDirx
 
         % ITDを取得
         nB{i, j}.ITD    = getITD(L, R, Fs);
-        disp([round(spkr) round(dirx) round(nB{i, j}.ITD)]);
+
+        % ILDを取得
+        nB{i, j}.ILD    = getILD(L, R);
+
+        % 結果を表示
+        disp([round(spkr) round(dirx) round(nB{i, j}.ITD) round(nB{i, j}.ILD)]);
 
     end
 end
