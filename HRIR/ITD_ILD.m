@@ -95,9 +95,11 @@ end
 [sP, eP]        = setWin(stdIR);
 
 % 構造体で諸々を管理したい
-nB = struct('wavName', [], 'pngName', [], 'ITD', [], 'ILD', []);
-nB.wavName  = strcat(num2str(spkr), '_', num2str(dirx), '.wav');
-nB.pngName  = strcat(num2str(spkr), '_', num2str(dirx), '.png');
+nB = struct('wavName', [], 'ITD', [], 'ILD', []);
+
+% wavファイル名は適宜変更すること
+% 多くの場合、for文を回すことになると思われる
+nB.wavName  = 'example_XX.wav';
 
 % インパルス応答を取得して窓区間を適用
 [IR_L, IR_R, Fs]    = getIR(nB.wavName);
