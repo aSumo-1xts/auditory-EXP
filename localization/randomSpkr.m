@@ -4,17 +4,14 @@
 % 履歴はyyyy-MMdd-HHmm-rS.csvに出力されるので、
 % 回答結果をそこに書き足し、plotBubble.mでプロットする。
 
-
-
 clear; clc; close all;
+pause('on');        % ポーズ機能ON
 
 % ↓ setting var ↓
 howManyCh   = 4;    % 総チャンネル数
 repeat      = 1;    % 繰り返し数
 delayTime   = 1;    % 再生間インターバル[秒]
 % ↑ setting var ↑
-
-pause('on');    % ポーズ機能ON
 
 
 
