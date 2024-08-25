@@ -3,14 +3,6 @@
 
 
 
-clear; clc; close all;
-
-howManyCh   = 8;
-howManyDirx = 8;
-nB          = cell(howManyDirx, howManyCh);   % nameBox
-
-
-
 % チャープ信号のバイノーラル録音からインパルス応答を取得する関数
 function [IR_L, IR_R, Fs] = getIR(wavName)
     [stereo, Fs] = audioread(wavName);  % バイノーラル録音データを読み込む
@@ -99,33 +91,21 @@ end
 % =================================================================================================
 
 % 正面方向のインパルス応答から、適切な窓区間を取得
-[stdIR, ~, ~]   = getIR('0_0.wav');
+[stdIR, ~, ~]   = getIR('example_00.wav');
 [sP, eP]        = setWin(stdIR);
 
-for i = 1:howManyDirx
-    spkr = (i-1)*45;
+% 構造体で諸々を管理したい
+nB = struct('wavName', [], 'pngName', [], 'ITD', [], 'ILD', []);
+nB.wavName  = strcat(num2str(spkr), '_', num2str(dirx), '.wav');
+nB.pngName  = strcat(num2str(spkr), '_', num2str(dirx), '.png');
 
-    for j = 1:howManyCh
-        dirx = (j-1)*45;
+% インパルス応答を取得して窓区間を適用
+[IR_L, IR_R, Fs]    = getIR(nB.wavName);
+L = useWin(IR_L, sP, eP);
+R = useWin(IR_R, sP, eP);
 
-        % 構造体で諸々を管理したい
-        nB{i, j}            = struct('wavName', [], 'pngName', [], 'ITD', [], 'ILD', []);
-        nB{i, j}.wavName    = strcat(num2str(spkr), '_', num2str(dirx), '.wav');
-        nB{i, j}.pngName    = strcat(num2str(spkr), '_', num2str(dirx), '.png');
+nB.ITD  = getITD(L, R, Fs); % ITDを取得
+nB.ILD  = getILD(L, R);     % ILDを取得
 
-        % インパルス応答を取得して窓区間を適用
-        [IR_L, IR_R, Fs]    = getIR(nB{i, j}.wavName);
-        L = useWin(IR_L, sP, eP);
-        R = useWin(IR_R, sP, eP);
-
-        % ITDを取得
-        nB{i, j}.ITD    = getITD(L, R, Fs);
-
-        % ILDを取得
-        nB{i, j}.ILD    = getILD(L, R);
-
-        % 結果を表示
-        disp([round(spkr) round(dirx) round(nB{i, j}.ITD) round(nB{i, j}.ILD)]);
-
-    end
-end
+% 結果を表示
+disp([round(spkr) round(dirx) round(nB.ITD) round(nB.ILD)]);
