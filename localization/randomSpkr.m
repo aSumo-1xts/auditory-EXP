@@ -1,14 +1,17 @@
-% 最も基本的な音源/音像定位実験のためのスクリプト
-% selectOneCh.slxをリモート実行する
+% 最も基本的な音源/音像定位実験のためのスクリプト。
+% selectOneCh.slxをスクリプト実行すると、
+% howManyCh個のスピーカのうち無作為に選ばれた一つから音源が再生される。
+% 履歴はyyyy-MMdd-HHmm-rS.csvに出力されるので、
+% 回答結果をそこに書き足し、plotBubble.mでプロットする。
 
-% howManyCh個のスピーカのうち無作為に選ばれた一つから音源を再生する
-% 履歴はyyyy-MMdd-HHmm-rS.csvに出力される
-% バブルチャートへのプロットにはplotBubble.mを活用のこと
+
+
+clear; clc; close all;
 
 % ↓ setting var ↓
 howManyCh   = 4;    % 総チャンネル数
 repeat      = 1;    % 繰り返し数
-delayTime   = 1;    % インターバル[s]
+delayTime   = 1;    % 再生間インターバル[秒]
 % ↑ setting var ↑
 
 pause('on');    % ポーズ機能ON
@@ -43,7 +46,6 @@ for i = 1:repeat                            % 総試行回数は howManyCh*repea
 
 	    set_param(path02, 'ColStartIndex', num2str(speakerNum(1, j)));
 	    simOut = sim(model, 'ReturnWorkspaceOutputs', 'on');
-        % disp([no, chDirection{no}]);
         pause(delayTime);
     end
 end

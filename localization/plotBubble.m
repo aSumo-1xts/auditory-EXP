@@ -1,9 +1,9 @@
 % randomSpkr.mによって行われた音源/音像定位実験の結果を
 % バブルチャートでプロットするためのスクリプト
-
 % yyyy-MMdd-HHmm-rS.csvの2行目に、
 % 対応する実験結果（回答角度）を書き込んでおくこと！
 
+clear; clc; close all;
 load carbig
 
 
