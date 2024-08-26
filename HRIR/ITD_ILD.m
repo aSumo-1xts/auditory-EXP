@@ -66,7 +66,7 @@ function ITD = getITD(winIR_L, winIR_R, Fs)
     phiFX       = top ./ bottom;
     [~, maxIndex]   = max(phiFX);
 
-    % サンプリング周波数48[kHz]*8=384[kHz]を考慮して、時間分解能を掛けて補正する
+    % サンプリング周波数48[kHz]*8=384[kHz]を考慮して、時間分解能を掛けて補正
     ITD = lags(maxIndex) * 2.6; % [us]
 end
 
@@ -113,4 +113,4 @@ nB.ITD  = getITD(L, R, Fs); % ITDを取得
 nB.ILD  = getILD(L, R);     % ILDを取得
 
 % 結果を表示
-disp([round(spkr) round(dirx) round(nB.ITD) round(nB.ILD)]);
+disp([round(nB.ITD) round(nB.ILD)]);
