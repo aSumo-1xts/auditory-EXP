@@ -91,6 +91,7 @@ end
 
 
 
+% 以上の関数をまとめて実行する関数
 function [ITD, ILD] = MAIN(wavName)
     % 正面方向のインパルス応答から、適切な窓区間を取得
     [stdIR, ~, ~]   = getIR('example_00.wav');
