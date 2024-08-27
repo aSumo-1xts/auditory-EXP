@@ -9,11 +9,12 @@ load carbig
 
 
 % CSVファイル（回答書き込み済）の読み込み
-data1 = readmatrix('2024-0723-0038-rS.csv');
-data2 = readmatrix('2024-0723-0045-rS.csv');
-data3 = readmatrix('2024-0723-0051-rS.csv');
-data4 = readmatrix('2024-0723-0107-rS.csv');
-data5 = readmatrix('2024-0723-0114-rS.csv');
+% 例としてyyyy…としているが、実際には日付に即した数字が入る
+data1 = readmatrix('yyyy-MMdd-0001-rS.csv');
+data2 = readmatrix('yyyy-MMdd-0002-rS.csv');
+data3 = readmatrix('yyyy-MMdd-0003-rS.csv');
+data4 = readmatrix('yyyy-MMdd-0004-rS.csv');
+data5 = readmatrix('yyyy-MMdd-0005-rS.csv');
 tData = horzcat(data1, data2, data3, data4, data5)';  % ひとまとめに結合
 
 
@@ -32,8 +33,8 @@ zData = plotData(:, 3); % 3列目：回答回数（バブルの直径）
 [xSorted, key] = sort(xData);   % 1列目を昇順に並べ替える
 ySorted        = yData(key);    % 2列目を1列目に合わせて並べ替える
 zSorted        = zData(key);    % 2列目を1列目に合わせて並べ替える
-% バブルチャートはデータをバブルの面積に反映させる
-% 面積ではなく直径としてプロットしたいので、変換しておく
+% バブルチャートは、データをバブルの面積に反映させる仕様になっている
+% 面積ではなく直径に反映させたいので、変換しておく
 zSorted2r      = 2 * sqrt(pi * zSorted);
 
 

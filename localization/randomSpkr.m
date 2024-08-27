@@ -7,15 +7,13 @@
 clear; clc; close all;
 pause('on');        % ポーズ機能ON
 
-% ↓ setting var ↓
 howManyCh   = 4;    % 総チャンネル数
 repeat      = 1;    % 繰り返し数
 delayTime   = 1;    % 再生間インターバル[秒]
-% ↑ setting var ↑
 
 
 
-% ファイル名（yyyy-MMdd-HHmm.csv）の生成
+% ファイル名（yyyy-MMdd-HHmm-rS.csv）の生成
 date        = datetime('now');
 date.Format = 'yyyy-MMdd-HHmm''-rS.csv';
 fileName    = char(date);
@@ -40,7 +38,6 @@ for i = 1:repeat                            % 総試行回数は howManyCh*repea
     for j = 1:howManyCh
         no = (i-1)*howManyCh+j;
         chDirx{no} = rem(speakerNum(1, j), howManyCh) * (360/howManyCh);
-
 	    set_param(path02, 'ColStartIndex', num2str(speakerNum(1, j)));
 	    simOut = sim(model, 'ReturnWorkspaceOutputs', 'on');
         pause(delayTime);
@@ -50,4 +47,5 @@ end
 
 
 close_system(model, 0);
-writecell(chDirx, fileName);
+
+writecell(chDirx, fileName);    % ファイルへの書き込み
