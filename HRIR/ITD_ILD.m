@@ -18,8 +18,8 @@ function [IR_L, IR_R, Fs] = getIR(wavName)
     invChirp = fliplr(chirp(t, f0, t(end), f1));    % 逆チャープ信号を生成
 
     % チャープ信号と逆チャープ音の畳み込みを行う
-    IR_L = conv(stereo(:, 1), invChirp, 'same');
-    IR_R = conv(stereo(:, 2), invChirp, 'same');
+    IR_L = conv(stereo(:, 1), invChirp, 'full');
+    IR_R = conv(stereo(:, 2), invChirp, 'full');
 end
 
 
@@ -48,7 +48,7 @@ end
 
 
 % 両耳インパルス応答からITDを取得する関数
-function ITD = getITD(winIR_L, winIR_R, Fs)
+function itd = getITD(winIR_L, winIR_R, Fs)
     % 波形の時間差が左右方向の知覚の手掛かりとなる事象は約1.6kHz以下の帯域に限られるため、
     % 1.6kHzをカットオフ周波数とするローパスフィルタをかける
     cutFreq = 1600;
@@ -67,14 +67,15 @@ function ITD = getITD(winIR_L, winIR_R, Fs)
     [~, maxIndex]   = max(phiFX);
 
     % サンプリング周波数48[kHz]*8=384[kHz]を考慮して、時間分解能を掛けて補正
-    ITD = lags(maxIndex) * 2.6; % [us]
+    % 正：左耳遅れ / 負：右耳遅れ
+    itd = lags(maxIndex) * 2.6; % [us]
 end
 
 
 
 % 両耳インパルス応答からILDを取得する関数
 % 紹介されているうち、後者の方法を採用
-function ILD = getILD(winIR_L, winIR_R)
+function ild = getILD(winIR_L, winIR_R)
     % 各周波数成分のパワーを計算
     power_L = abs(fft(winIR_L)).^2;
     power_R = abs(fft(winIR_R)).^2;
@@ -84,33 +85,30 @@ function ILD = getILD(winIR_L, winIR_R)
     dB_R = pow2db(power_R);
 
     % 各周波数成分の平均デシベル差を計算してILDとする
-    ILD = max(dB_L - dB_R);
+    % 正：左耳の方が大きい / 負：右耳の方が大きい
+    ild = max(dB_R - dB_L);
+end
+
+
+
+function [ITD, ILD] = MAIN(wavName)
+    % 正面方向のインパルス応答から、適切な窓区間を取得
+    [stdIR, ~, ~]   = getIR('example_00.wav');
+    [sP, eP]        = setWin(stdIR);
+
+    % インパルス応答を取得して窓区間を適用
+    [IR_L, IR_R, Fs]    = getIR(wavName);
+    L = useWin(IR_L, sP, eP);
+    R = useWin(IR_R, sP, eP);
+
+    ITD  = getITD(L, R, Fs); % ITDを取得
+    ILD  = getILD(L, R);     % ILDを取得
 end
 
 
 
 % =================================================================================================
-% ここからmain関数！
+% ここから本当のmain関数！
 % =================================================================================================
 
-% 正面方向のインパルス応答から、適切な窓区間を取得
-[stdIR, ~, ~]   = getIR('example_00.wav');
-[sP, eP]        = setWin(stdIR);
-
-% 構造体で諸々を管理したい
-nB = struct('wavName', [], 'ITD', [], 'ILD', []);
-
-% wavファイル名は適宜変更すること
-% 多くの場合、for文を回すことになると思われる
-nB.wavName  = 'example_XX.wav';
-
-% インパルス応答を取得して窓区間を適用
-[IR_L, IR_R, Fs]    = getIR(nB.wavName);
-L = useWin(IR_L, sP, eP);
-R = useWin(IR_R, sP, eP);
-
-nB.ITD  = getITD(L, R, Fs); % ITDを取得
-nB.ILD  = getILD(L, R);     % ILDを取得
-
-% 結果を表示
-disp([round(nB.ITD) round(nB.ILD)]);
+[ITD, ILD] = MAIN('example_XX.wav');    % 実際にはXXを変数にしてfor文を回すことが多い
